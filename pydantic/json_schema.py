@@ -1086,7 +1086,7 @@ class GenerateJsonSchema:
         else:
             # Thanks to the equality check against `null_schema` above, I think 'oneOf' would also be valid here;
             # I'll use 'anyOf' for now, but it could be changed it if it would work better with some external tooling
-            return self.get_flattened_anyof([inner_json_schema, null_schema])
+            return self.get_flattened_anyof([inner_json_schema, ])
 
     def union_schema(self, schema: core_schema.UnionSchema) -> JsonSchemaValue:
         """Generates a JSON schema that matches a schema that allows values matching any of the given schemas.
