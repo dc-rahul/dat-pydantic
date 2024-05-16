@@ -477,12 +477,12 @@ class GenerateJsonSchema:
             return json_schema
 
         def convert_to_all_of(json_schema: JsonSchemaValue) -> JsonSchemaValue:
-            if '$ref' in json_schema and len(json_schema.keys()) > 1:
-                # technically you can't have any other keys next to a "$ref"
-                # but it's an easy mistake to make and not hard to correct automatically here
-                json_schema = json_schema.copy()
-                ref = json_schema.pop('$ref')
-                json_schema = {'allOf': [{'$ref': ref}], **json_schema}
+            # if '$ref' in json_schema and len(json_schema.keys()) > 1:
+            #     # technically you can't have any other keys next to a "$ref"
+            #     # but it's an easy mistake to make and not hard to correct automatically here
+            #     json_schema = json_schema.copy()
+            #     ref = json_schema.pop('$ref')
+            #     json_schema = {'allOf': [{'$ref': ref}], **json_schema}
             return json_schema
 
         def handler_func(schema_or_field: CoreSchemaOrField) -> JsonSchemaValue:
@@ -1062,12 +1062,12 @@ class GenerateJsonSchema:
             # Return the inner schema, as though there was no default
             return json_schema
 
-        if '$ref' in json_schema:
-            # Since reference schemas do not support child keys, we wrap the reference schema in a single-case allOf:
-            return {'allOf': [json_schema], 'default': encoded_default}
-        else:
-            json_schema['default'] = encoded_default
-            return json_schema
+        # if '$ref' in json_schema:
+        #     # Since reference schemas do not support child keys, we wrap the reference schema in a single-case allOf:
+        #     return {'allOf': [json_schema], 'default': encoded_default}
+        # else:
+        json_schema['default'] = encoded_default
+        return json_schema
 
     def nullable_schema(self, schema: core_schema.NullableSchema) -> JsonSchemaValue:
         """Generates a JSON schema that matches a schema that allows null values.
@@ -1998,12 +1998,12 @@ class GenerateJsonSchema:
                 # This can happen when building schemas for models with not-yet-defined references.
                 # It may be a good idea to do a recursive pass at the end of the generation to remove
                 # any redundant override keys.
-                if len(json_schema) > 1:
-                    # Make it an allOf to at least resolve the sibling keys issue
-                    json_schema = json_schema.copy()
-                    json_schema.setdefault('allOf', [])
-                    json_schema['allOf'].append({'$ref': json_schema['$ref']})
-                    del json_schema['$ref']
+                # if len(json_schema) > 1:
+                #     # Make it an allOf to at least resolve the sibling keys issue
+                #     json_schema = json_schema.copy()
+                #     json_schema.setdefault('allOf', [])
+                #     json_schema['allOf'].append({'$ref': json_schema['$ref']})
+                #     del json_schema['$ref']
 
                 return json_schema
             for k, v in list(json_schema.items()):
@@ -2011,12 +2011,12 @@ class GenerateJsonSchema:
                     continue
                 if k in referenced_json_schema and referenced_json_schema[k] == v:
                     del json_schema[k]  # redundant key
-            if len(json_schema) > 1:
-                # There is a remaining "override" key, so we need to move $ref out of the top level
-                json_ref = JsonRef(json_schema['$ref'])
-                del json_schema['$ref']
-                assert 'allOf' not in json_schema  # this should never happen, but just in case
-                json_schema['allOf'] = [{'$ref': json_ref}]
+            # if len(json_schema) > 1:
+            #     # There is a remaining "override" key, so we need to move $ref out of the top level
+            #     json_ref = JsonRef(json_schema['$ref'])
+            #     del json_schema['$ref']
+            #     assert 'allOf' not in json_schema  # this should never happen, but just in case
+            #     json_schema['allOf'] = [{'$ref': json_ref}]
 
         return json_schema
 
